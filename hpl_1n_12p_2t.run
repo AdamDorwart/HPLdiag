@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH -p debug
+#SBATCH -N 1
+#SBATCH -n 24
+#SBATCH --ntasks-per-node=24
+#SBATCH -t 00:37:00
+#SBATCH -J HPL_1n_12p_2t
+#SBATCH -o HPL_1n_12p_2t.%j.%N.out
+#SBATCH -e HPL_1n_12p_2t.%j.%N.err
+#SBATCH --export=ALL
+
+tstart=`date +%s` # Starting timestamp
+
+# Set time limit for HPL execution to slurm wall times minus 240 seconds
+tlimit=1980
+
+# This is the HPL.24.P2.Q6.N117824.dat HPL.dat  problem
+# run on 1 node, 12 MPI processes and 2 threads per MPI process
+
+### Setup the environment:
+module load intel mvapich2_ib
+export OMP_NUM_THREADS=2
+
+# Execute code and set time limit using timeout
+timeout $tlimit ibrun -np 12 ./xhpl.hybrid
+timeout_code=$?
+
+npass=`grep PASSED $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
+nfail=`grep FAILED $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
+time=`grep WR11C2R4 $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | awk '{print $6}'`
+
+if [ $timeout_code = '124' ]; then                  # Did job timeout?
+    result="TIMEOUT"
+elif (( $npass == 0 )) && (( $nfail == 0)); then    # Did job die (fail to return answer)?
+    result="DIED"
+elif (( $npass > 0 )) && (( $nfail == 0)); then     # Did job give correct answer?
+    result="PASS"
+else                                                # If we got here, found wrong answer
+    result="FAIL"
+fi
+
+tend=`date +%s` # Starting timestamp
+
+echo "$SLURM_JOB_ID,$tstart,$tend,\"$SLURM_JOB_NODELIST\",$time,$result" >> HPL_results.txt

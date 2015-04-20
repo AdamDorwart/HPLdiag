@@ -1,0 +1,14 @@
+This directory contains everything that you'll need to run a single
+node HPL problem on Comet using 12 MPI processes and 2 threads per
+process.
+
+HPL.dat			HPL input data
+hpl_1n_12p_2t.run	Slurm batch script
+xhpl.hybrid		HPL executable for hybrid (MPI+OpenMP) execution
+hosts			List of Comet compute nodes
+
+To run a single problem using first available node
+sbatch hpl_1n_12p_2t.run
+
+To run a single problem using a specific node
+sbatch -w comet-xx-yy hpl_1n_12p_2t.run
