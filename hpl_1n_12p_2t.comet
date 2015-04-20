@@ -1,12 +1,11 @@
 #!/bin/bash
-#SBATCH -p debug
 #SBATCH -N 1
 #SBATCH -n 24
 #SBATCH --ntasks-per-node=24
 #SBATCH -t 00:37:00
 #SBATCH -J HPL_1n_12p_2t
-#SBATCH -o HPL_1n_12p_2t.%j.%N.out
-#SBATCH -e HPL_1n_12p_2t.%j.%N.err
+#SBATCH -o %j/HPL_1n_12p_2t.%N.out
+#SBATCH -e %j/HPL_1n_12p_2t.%N.err
 #SBATCH --export=ALL
 
 tstart=`date +%s` # Starting timestamp
@@ -41,4 +40,4 @@ fi
 
 tend=`date +%s` # Starting timestamp
 
-echo "$SLURM_JOB_ID,$tstart,$tend,\"$SLURM_JOB_NODELIST\",$time,$result" >> HPL_results.txt
+echo "$SLURM_JOB_ID,$tstart,$tend,\"$SLURM_JOB_NODELIST\",$time,$result" >> log/HPLresults.$1
