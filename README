@@ -12,3 +12,6 @@ sbatch hpl_1n_12p_2t.run
 
 To run a single problem using a specific node
 sbatch -w comet-xx-yy hpl_1n_12p_2t.run
+
+TODO:
+For GPU nodes, use combination of HPL and AMBER

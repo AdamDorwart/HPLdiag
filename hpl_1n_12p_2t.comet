@@ -4,8 +4,8 @@
 #SBATCH --ntasks-per-node=24
 #SBATCH -t 00:37:00
 #SBATCH -J HPL_1n_12p_2t
-#SBATCH -o %j/HPL_1n_12p_2t.%N.out
-#SBATCH -e %j/HPL_1n_12p_2t.%N.err
+#SBATCH -o ./results/HPL_1n_12p_2t.%j.%N.out
+#SBATCH -e ./results/HPL_1n_12p_2t.%j.%N.err
 #SBATCH --export=ALL
 
 tstart=`date +%s` # Starting timestamp
@@ -24,9 +24,9 @@ export OMP_NUM_THREADS=2
 timeout $tlimit ibrun -np 12 ./xhpl.hybrid
 timeout_code=$?
 
-npass=`grep PASSED $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
-nfail=`grep FAILED $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
-time=`grep WR11C2R4 $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | awk '{print $6}'`
+npass=`grep PASSED ./results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
+nfail=`grep FAILED ./results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
+tinterval=`grep WR11C2R4 ./results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | awk '{print $6}'`
 
 if [ $timeout_code = '124' ]; then                  # Did job timeout?
     result="TIMEOUT"
@@ -38,6 +38,6 @@ else                                                # If we got here, found wron
     result="FAIL"
 fi
 
-tend=`date +%s` # Starting timestamp
+tend=`date +%s` # Ending timestamp
 
-echo "$SLURM_JOB_ID,$tstart,$tend,\"$SLURM_JOB_NODELIST\",$time,$result" >> log/HPLresults.$1
+echo "$SLURM_JOB_ID $tstart $tend $SLURM_JOB_NODELIST $tinterval $result" >> log/HPLresults.$1
