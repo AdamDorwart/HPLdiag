@@ -35,7 +35,8 @@ done < $1
 sinfo -o "%n %T %E" | grep -e "maint" -e "down" -e "drained" -e "fail" | while read line; do
 	DOAnode=`echo $line | awk '{print $1}'`
 	DOAjobid=`squeue -o "%i %n" -u $USER | grep $DOAnode | awk '{print $1}'`
-	# if job id exists...
-	#	scancel $DOAjobid
-	#	echo "$DOAjobid $line" >> log/HPLresults.$postfix
+	if [ -n "$DOAjobid" ]; then
+		scancel $DOAjobid
+		echo "$DOAjobid $line" >> log/HPLresults.$postfix 
+	fi
 done
