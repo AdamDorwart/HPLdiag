@@ -23,6 +23,6 @@ For SSD tests, look into IOR and FIO. Note that drive performance degrades as se
 
 Useful commands:
 Get the status of all nodes currently enqueued
-sinfo -o "%n %T" | grep -f <(squeue -o %n -u $USER)
+sinfo -o "%n %T %E" -n `squeue -h -o %n -u $USER | sed ':a;N;$!ba;s/\n/,/g'`
 Create a hosts retest file from the TIMEOUTs in a result file
 grep TIMEOUT log/HPLresults.050815 | awk '{print $4}' | grep -f - hosts > retestHosts
