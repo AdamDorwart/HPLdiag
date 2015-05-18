@@ -5,13 +5,20 @@ process.
 HPL.dat			HPL input data
 hpl_1n_12p_2t.run	Slurm batch script
 xhpl.hybrid		HPL executable for hybrid (MPI+OpenMP) execution
-hosts			List of Comet compute nodes
+hosts			List of Comet nodes with partitions
+HPLdiag.sh		Runs diagnostics on all nodes in a provided input file (see hosts) and puts the results in log/HPLresults.MMDDYY
+HPLcancel.sh		Cancels all running tests for the current $USER. Logs actions in log/HPLresults.MMDDYY
 
-To run a single problem using first available node
-sbatch hpl_1n_12p_2t.run
+To run a diagnostic across all of comet use the provided hosts file like so
+$ ./HPLdiag.sh hosts
 
-To run a single problem using a specific node
-sbatch -w comet-xx-yy hpl_1n_12p_2t.run
+To run a diagnostic on particular nodes and partitions
+$ cat > smallTest
+comet-xx-yy compute
+comet-ww-zz compute
+comet-ii-jj shared
+
+$ ./HPLdiag.shi smallTest
 
 'hosts' file can be generated with
 sinfo -o "%n %R" -h | column -t | sort -u -k1,1 > hosts
@@ -20,6 +27,11 @@ The end of the file will sometimes contain a line for a 'fat' partition. Remove 
 TODO:
 For GPU nodes, use combination of HPL and AMBER
 For SSD tests, look into IOR and FIO. Note that drive performance degrades as sectors get marked for TRIM and need to be periodically wiped to achevie full speed
+Added automatic notification of bad nodes (via email?)
+Analyze duration times of results
+Better input handling for HPLdiag
+- Accept pipping or input file
+- Options to run specific tests
 
 Useful commands:
 Get the status of all nodes currently enqueued

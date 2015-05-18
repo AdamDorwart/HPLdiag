@@ -8,10 +8,14 @@ while read line; do
 	node=`echo $line | awk '{ print $1}'`
 	partition=`echo $line | awk '{ print $2}'`
 	# Dispatch job based on the partition
+	# Default to compute partition if none given
 	if [ "$partition" == "compute" -o "$partition" == "shared" ]; then
 		sbatch -w $node -p $partition hpl_1n_12p_2t.comet $postfix > /dev/null
 	elif [ "$partition" == "gpu" -o "$partition" == "gpu-shared" ]; then
-		echo "Skipping $node: $partition currently unsupported for testing." >> log/HPLresults.$postfix
+		sbatch -w $node -p $partition hpl_1n_12p_2t.comet $postfix > /dev/null
+		# Need AMBER GPU tests as well as CPU/GPU HPL tests
+	elif [ "$partition" == "" ]; then
+		sbatch -w $node -p "compute" hpl_1n_12p_2t.comet $postfix > /dev/null
 	fi
 	# Update spinner
 	spinf=${spinq#?}
@@ -19,24 +23,12 @@ while read line; do
 	spinq=$spinf${spinq%"$spinf"}
 	printf "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
 done < $1
-# This part cancels all jobs with a reason code "ReqNodeNotAvail"
-# I've commented this out because it appears jobs in this state
-# aren't necessarily offline. Sometimes they're are actually just
-# running another users job. Need to research this reason code more.
-# An alternative might also be to find a better way to enumerate offline nodes
-# My best guess would be sinfo
-#squeue -o "%R %i %n" -u $USER | grep "ReqNodeNotAvail" | while read line; do 
-#	DOAjobid=`echo $line | awk '{ print $2}'`
-#	DOAnode=`echo $line | awk '{ print $3}'`
-#	scancel $DOAjobid
-#	echo "$DOAjobid $DOAnode UNAVAILABLE" >> log/HPLresults.$postfix
-#done
-
+# Cancel all jobs for nodes that are down, failed, or in maintenece
 sinfo -o "%n %T %E" | grep -e "maint" -e "down" -e "drained" -e "fail" | while read line; do
 	DOAnode=`echo $line | awk '{print $1}'`
 	DOAjobid=`squeue -o "%i %n" -u $USER | grep $DOAnode | awk '{print $1}'`
-	if [ -n "$DOAjobid" ]; then
+	if [ -n $DOAjobid ]; then	
 		scancel $DOAjobid
-		echo "$DOAjobid $line" >> log/HPLresults.$postfix 
+		echo "$DOAjobid $line" >> log/HPLresults.$postfix
 	fi
 done
