@@ -1,0 +1,18 @@
+A system benchmark has completed on Comet.
+
+%HEADER%
+
+The following nodes timed out while running the HPL benchmark and may require maintenance:
+%TIMEOUT%
+
+The following benchmarks died before they could complete:
+%DIED%
+
+The following nodes returned erroneous results and require further inspection: 
+%FAILED%
+
+The complete benchmark logs can be found at /home/adorwart/HPLmon/logs
+
+The code for these automated benchmarks can be found at https://www.github.com/AdamDorwart/HPLdiag and can be used to launch tests on particular nodes
+
+-Adam
