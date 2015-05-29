@@ -29,13 +29,13 @@ nfail=`grep FAILED ./results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc -l`
 tinterval=`grep WR11C2R4 ./results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | awk '{print $6}'`
 
 if [ $timeout_code = '124' ]; then                  # Did job timeout?
-    result="TIMEOUT"
+    result="HPL-TIMEOUT"
 elif (( $npass == 0 )) && (( $nfail == 0)); then    # Did job die (fail to return answer)?
-    result="DIED"
+    result="HPL-DIED"
 elif (( $npass > 0 )) && (( $nfail == 0)); then     # Did job give correct answer?
-    result="PASS"
+    result="HPL-PASS"
 else                                                # If we got here, found wrong answer
-    result="FAIL"
+    result="HPL-FAIL"
 fi
 
 tend=`date +%s` # Ending timestamp
