@@ -2,17 +2,20 @@ This directory contains everything that you'll need to run a single
 node HPL problem on Comet using 12 MPI processes and 2 threads per
 process.
 
-log/			Stores simplified logs of test results
-results/		Stores indivudal job stdout/err files
-HPL.dat			HPL input data
-hpl_1n_12p_2t.run	Slurm batch script
-xhpl.hybrid		HPL executable for hybrid (MPI+OpenMP) execution
-hosts			List of Comet nodes with partitions
-HPLdiag.sh		Runs diagnostics on all nodes in a provided input file (see hosts) and puts the results in log/HPLresults.MMDDYY
-HPLcancel.sh		Cancels all running tests for the current $USER. Logs actions in log/HPLresults.MMDDYY
-sendStatusEmail.sh	Sends a status email on the health of the system given an input log file (located in logs), uses statusMailingList for recipients
-statusEmail.txt		The template used for sendStatusEmail script
-statusMailingList	Line deliminated file of emails to send status reports to
+log/				Stores simplified logs of test results
+results/			Stores indivdual job stdout/err files
+CPU/HPL.dat			HPL input data for CPU tests
+CPU/hpl_1n_12p_2t.comet		Slurm batch script for HPL benchmarks on Comet compute nodes
+CPU/xhpl.cpu			HPL executable for hybrid (MPI+OpenMP) execution
+GPU/HPL.dat			HPL input data for GPU tests (larger problem size for longer runtime)
+GPU/hpl_1n_12p_4g_2t.comet	Slurm batch script for HPL benchmarks on Comet gpu nodes
+GPU/xhpl.gpu			HPL executable for CUDA GPU execution
+hosts				List of Comet nodes with partitions
+HPLdiag.sh			Runs diagnostics on all nodes in a provided input file (see hosts) and puts the results in log/HPLresults.MMDDYY
+HPLcancel.sh			Cancels all running tests for the current $USER. Logs actions in log/HPLresults.MMDDYY
+sendStatusEmail.sh		Sends a status email on the health of the system given an input log file (located in logs), uses statusMailingList for recipients
+statusEmail.txt			The template used for sendStatusEmail script
+statusMailingList		Line deliminated file of emails to send status reports to
 
 To run a diagnostic across all of comet use the provided hosts file like so
 $ ./HPLdiag.sh hosts
@@ -42,4 +45,4 @@ Useful commands:
 Get the status of all nodes currently enqueued
 sinfo -o "%n %T %E" -n `squeue -h -o %n -u $USER | sed ':a;N;$!ba;s/\n/,/g'`
 Create a hosts retest file from the TIMEOUTs in a result file
-grep TIMEOUT log/HPLresults.$timestamp | awk '{print $4}' | grep -f - hosts > retestHosts
+grep HPL-*-TIMEOUT log/HPLresults.$timestamp | awk '{print $4}' | grep -f - hosts > retestHosts
