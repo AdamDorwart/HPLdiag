@@ -1,0 +1,66 @@
+#!/bin/bash
+#SBATCH --job-name=HPL_1n_12p_4g_2t
+#SBATCH --output=../results/HPL_1n_12p_4g_2t.%j.%N.out
+#SBATCH --error=../results/HPL_1n_12p_4g_2t.%j.%N.err
+#SBATCH --partition=gpu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --export=ALL
+#SBATCH --gres=gpu:4
+#SBATCH --time 00:37:00
+
+tstart=`date +%s` # Starting timestamp
+
+# Set time limit for app to slurm wall times minus 300 seconds
+#tlimit=950
+tlimit=2000
+
+module load intel
+module load mvapich2_ib
+module load cuda
+
+# Number of CPU cores ( per GPU used = per MPI process )
+CPU_CORES_PER_GPU=6
+
+# FOR MKL
+export MKL_NUM_THREADS=$CPU_CORES_PER_GPU
+# FOR GOTO
+export GOTO_NUM_THREADS=$CPU_CORES_PER_GPU
+# FOR OMP
+export OMP_NUM_THREADS=$CPU_CORES_PER_GPU
+
+export MKL_DYNAMIC=FALSE
+
+# hint: for 2050 or 2070 card
+#       try 350/(350 + MKL_NUM_THREADS*4*cpu frequency in GHz) 
+export CUDA_DGEMM_SPLIT=0.80
+
+# hint: try CUDA_DGEMM_SPLIT - 0.10
+export CUDA_DTRSM_SPLIT=0.70
+
+timeout $tlimit ibrun -v -n 4 ./xhpl.gpu
+timeout_code=$?
+
+npass=`grep PASSED ../results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc --lines`
+nfail=`grep FAILED ../results/$SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | wc --lines`
+tinterval=`grep WR10L2L2 $SLURM_JOB_NAME.$SLURM_JOB_ID.*.out | awk '{print $6}'`
+
+if [ $timeout_code = '124' ]; then                  # Did job timeout?
+    result="HPL-GPU-TIMEOUT"
+    code=1
+elif (( $npass == 0 )) && (( $nfail == 0)); then    # Did job die (fail to return answer)?
+    result="HPL-GPU-DIED"
+    code=1
+elif (( $npass > 0 )) && (( $nfail == 0)); then     # Did job give correct answer?
+    result="HPL-GPU-PASS"
+    code=0
+else                                                # If we got here, found wrong answer
+    result="HPL-GPU-FAIL"
+    code=1
+fi
+
+tend=`date +%s` # Starting timestamp
+
+echo "$SLURM_JOB_ID $tstart $tend $SLURM_JOB_NODELIST $tinterval $result" >> ../log/HPLresults.$1
+
+exit $code

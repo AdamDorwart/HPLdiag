@@ -34,6 +34,7 @@ while read line; do
 	update_spinner
 done < $1
 # Cancel all jobs for nodes that are down, failed, or in maintenece
+# *the sed one-liner changes the node list from newline to comma delimited
 queued_nodes=`squeue -h -o %n -u $USER | sed ':a;N;$!ba;s/\n/,/g'`
 sinfo --format="%n %T %E" --nodes="$queued_nodes" --noheader | sort -u | grep -e "maint" -e "down" -e "drained" -e "fail" | while read line; do
 	DOAnode=`echo $line | awk '{print $1}'`
