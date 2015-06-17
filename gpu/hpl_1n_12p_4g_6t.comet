@@ -9,7 +9,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --time 00:37:00
 
-cd GPU
+cd gpu
 
 tstart=`date +%s` # Starting timestamp
 

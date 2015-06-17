@@ -8,7 +8,7 @@
 #SBATCH --error="./results/HPL_1n_12p_2t.%j.%N.err"
 #SBATCH --export=ALL
 
-cd COMPUTE
+cd compute
 echo "------------HPL CPU Test-------------------"
 
 tstart=`date +%s` # Starting timestamp
