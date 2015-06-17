@@ -1,13 +1,15 @@
 #!/bin/bash
-#SBATCH --job-name=HPL_1n_12p_4g_2t
-#SBATCH --output=../results/HPL_1n_12p_4g_2t.%j.%N.out
-#SBATCH --error=../results/HPL_1n_12p_4g_2t.%j.%N.err
+#SBATCH --job-name=HPL_1n_12p_4g_6t
+#SBATCH --output="./results/HPL_1n_12p_4g_6t.%j.%N.out"
+#SBATCH --error="./results/HPL_1n_12p_4g_6t.%j.%N.err"
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=24
 #SBATCH --export=ALL
 #SBATCH --gres=gpu:4
 #SBATCH --time 00:37:00
+
+cd GPU
 
 tstart=`date +%s` # Starting timestamp
 

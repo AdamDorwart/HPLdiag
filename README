@@ -4,9 +4,9 @@ process.
 
 log/				Stores simplified logs of test results
 results/			Stores indivdual job stdout/err files
-CPU/HPL.dat			HPL input data for CPU tests
-CPU/hpl_1n_12p_2t.comet		Slurm batch script for HPL benchmarks on Comet compute nodes
-CPU/xhpl.cpu			HPL executable for hybrid (MPI+OpenMP) execution
+COMPUTE/HPL.dat			HPL input data for CPU tests
+COMPUTE/hpl_1n_12p_2t.comet	Slurm batch script for HPL benchmarks on Comet compute nodes
+COMPUTE/xhpl.cpu		HPL executable for hybrid (MPI+OpenMP) execution
 GPU/HPL.dat			HPL input data for GPU tests (larger problem size for longer runtime)
 GPU/hpl_1n_12p_4g_2t.comet	Slurm batch script for HPL benchmarks on Comet gpu nodes
 GPU/xhpl.gpu			HPL executable for CUDA GPU execution

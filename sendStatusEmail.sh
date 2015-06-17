@@ -3,15 +3,15 @@
 # Send out a status email on a given HPL log to a mailing list
  
 header=`grep -e "---" --before-context=1 log/$1 | tail -2`
-timedOut=`grep -e "HPL-TIMEOUT" log/$1 | awk '{print $4}' | sort`
+timedOut=`grep -e "HPL-CPU-TIMEOUT" log/$1 | awk '{print $4}' | sort`
 if [ -z "$timedOut" ]; then
 	timedOut="No jobs timed out"
 fi
-died=`grep -e "HPL-DIED" log/$1 | awk '{print $4}' | sort`
+died=`grep -e "HPL-CPU-DIED" log/$1 | awk '{print $4}' | sort`
 if [ -z "$died" ]; then
         died="No jobs died"
 fi
-failed=`grep -e "HPL-FAIL" log/$1 | awk '{print $4}' | sort`
+failed=`grep -e "HPL-CPU-FAIL" log/$1 | awk '{print $4}' | sort`
 if [ -z "$failed" ]; then
         failed="No jobs failed"
 fi

@@ -23,13 +23,13 @@ while read line; do
 	# Dispatch job based on the partition
 	# Default to compute partition if none given
 	if [ "$partition" == "compute" -o "$partition" == "shared" ]; then
-		sbatch --nodelist=$node --partition=$partition CPU/hpl_1n_12p_2t.comet $postfix > /dev/null
+		sbatch --nodelist=$node --partition=$partition compute/hpl_1n_12p_2t.comet $postfix > /dev/null
 	elif [ "$partition" == "gpu" -o "$partition" == "gpu-shared" ]; then
 		# Run both CPU and GPU tests on GPU nodes
-		sbatch --nodelist=$node --partition=$partition CPU/hpl_1n_12p_2t.comet $postfix > /dev/null
+		sbatch --nodelist=$node --partition=$partition gpu/hpl_1n_12p_4g_6t.comet $postfix > /dev/null
 		#TODO: Need AMBER GPU tests as well as CPU/GPU HPL tests
 	elif [ "$partition" == "" ]; then
-		sbatch --nodelist=$node --partition="compute" CPU/hpl_1n_12p_2t.comet $postfix > /dev/null
+		sbatch --nodelist=$node --partition="compute" compute/hpl_1n_12p_2t.comet $postfix > /dev/null
 	fi
 	update_spinner
 done < $1
