@@ -4,12 +4,14 @@ process.
 
 log/				Stores simplified logs of test results
 results/			Stores indivdual job stdout/err files
-COMPUTE/HPL.dat			HPL input data for CPU tests
-COMPUTE/hpl_1n_12p_2t.comet	Slurm batch script for HPL benchmarks on Comet compute nodes
-COMPUTE/xhpl.cpu		HPL executable for hybrid (MPI+OpenMP) execution
-GPU/HPL.dat			HPL input data for GPU tests (larger problem size for longer runtime)
-GPU/hpl_1n_12p_4g_2t.comet	Slurm batch script for HPL benchmarks on Comet gpu nodes
-GPU/xhpl.gpu			HPL executable for CUDA GPU execution
+compute/HPL.dat			HPL input data for CPU tests
+compute/hpl_1n_12p_2t.comet	Slurm batch script for HPL benchmarks on Comet compute nodes
+compute/xhpl.cpu		HPL executable for hybrid (MPI+OpenMP) execution
+compute/ssd-test.fio		FIO input data used for SSD test
+compute/fio			Flexible IO tester. Used for SSD benchmarks
+gpu/HPL.dat			HPL input data for GPU tests (larger problem size for longer runtime)
+gpu/hpl_1n_12p_4g_2t.comet	Slurm batch script for HPL benchmarks on Comet gpu nodes
+gpu/xhpl.gpu			HPL executable for CUDA GPU execution
 hosts				List of Comet nodes with partitions
 HPLdiag.sh			Runs diagnostics on all nodes in a provided input file (see hosts) and puts the results in log/HPLresults.MMDDYY
 HPLcancel.sh			Cancels all running tests for the current $USER. Logs actions in log/HPLresults.MMDDYY
