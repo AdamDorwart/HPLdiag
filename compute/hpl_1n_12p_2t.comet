@@ -51,7 +51,7 @@ echo "$SLURM_JOB_ID $tstart $tend $SLURM_JOB_NODELIST $tinterval $result" >> ../
 
 echo "------------FIO SSD Test-------------------"
 awk -v user="$USER" -v jobid="$SLURM_JOB_ID" '{ gsub("%USER%",user); gsub("%JOBID%",jobid); print}' ./ssd-test.fio >> ssd-test.$SLURM_JOB_ID
-./fio ssd-test.$SLURM_JOB_ID
+./fio --output-format=json ssd-test.$SLURM_JOB_ID
 rm ssd-test.$SLURM_JOB_ID
 
 
